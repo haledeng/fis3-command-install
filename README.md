@@ -6,9 +6,12 @@ get npm packager from fis-conf.js at the current directory and install
 npm i -g fis3-command-install
 ```
 
-### use
+### how to use
 ```
 // -g is optional, install npm packager globally or locally.
 fis3 install -g
 ```
 
+
+### detect
+use npm view packager to detect existence of packager.

@@ -78,6 +78,10 @@ function getSinglePlugin(content) {
     return plugins;
 }
 
+/*
+ * @TODO
+ * 1. how to detect to install fis-xxx or fis3-xxx
+ */
 exports.register = function() {
     var root = process.cwd(),
         conf = path.join(root, 'fis-conf.js'),
@@ -97,11 +101,26 @@ exports.register = function() {
         if (params.length && params[0] === '-g') {
             cmd += '-g ';
         }
+
         if (isFis3) {
             // install two npm packagers. rude
-            plugins.forEach(function(plugin) {
-                exec(cmd + 'fis3-' + plugin + ' ');
-                exec(cmd + 'fis-' + plugin + ' ');
+            plugins.forEach(function(p) {
+                (function(plugin) {
+                    var child;
+                    exec('npm view ' + 'fis3-' + plugin, function(err) {
+                        if (err) {
+                            console.log('installing fis-' + plugin);
+                            child = child_process.exec(cmd + 'fis-' + plugin, function(e, out) {
+                                console.log(out);
+                            });
+                        } else {
+                            console.log('installing fis3-' + plugin);
+                            child = child_process.exec(cmd + 'fis3-' + plugin, function(e, out) {
+                                console.log(out);
+                            });
+                        }
+                    });
+                })(p);
             });
         }
 
