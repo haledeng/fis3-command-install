@@ -1,7 +1,6 @@
-/* global exprots */
+/* global fis, exprots, process */
 
 exports.name = 'install';
-exports.usage = '<template>';
 exports.desc = 'install fis npm packager in fis-conf.js';
 
 var path = require('path'),
@@ -9,13 +8,12 @@ var path = require('path'),
     child_process = require('child_process');
 
 
-var spawn = child_process.spawn,
-    exec = child_process.exec;
+var exec = child_process.exec;
 
 
 // var PLUGIN_REG = /fis\.plugin\([\'\"]([^\'\"]*)[\'\"]/img;
 
-var PLUGIN_REG = /(\w*)\s*:\s*\[?\s*fis\.plugin\([\'\"]([^\'\"]*)[\'\"]/img;
+// var PLUGIN_REG = /(\w*)\s*:\s*\[?\s*fis\.plugin\([\'\"]([^\'\"]*)[\'\"]/img;
 
 
 //  multy
@@ -107,6 +105,7 @@ exports.register = function() {
             plugins.forEach(function(p) {
                 (function(plugin) {
                     var child;
+                    // use npm list -g packager to check packager is installed globally
                     exec('npm view ' + 'fis3-' + plugin, function(err) {
                         if (err) {
                             console.log('installing fis-' + plugin);
