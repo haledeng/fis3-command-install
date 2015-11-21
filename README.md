@@ -15,3 +15,6 @@ fis3 install -g
 
 ### detect
 use npm view packager to detect existence of packager.
+
+### problem
+main problem is how to detect a local installation. By use npm list, it will just list all packagers in curren directory in node_modules. However, by use npm list -g, it will list all global packagers.
