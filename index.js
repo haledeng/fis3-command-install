@@ -76,6 +76,20 @@ function getSinglePlugin(content) {
     return plugins;
 }
 
+
+// fis3自带的模块要排除掉
+var inlineFisModules = [
+    'fis3-deploy-encoding',
+    'fis3-deploy-http-push',
+    'fis3-deploy-local-deliver',
+    'fis3-hook-components',
+    'fis3-packager-map',
+    'fis-optimizer-clean-css',
+    'fis-optimizer-png-compressor',
+    'fis-optimizer-uglify-js',
+    'fis-spriter-csssprites'
+];
+
 /*
  * @TODO
  * 1. how to detect to install fis-xxx or fis3-xxx
@@ -102,26 +116,49 @@ exports.register = function() {
 
         if (isFis3) {
             // install two npm packagers. rude
+            // exec('npm list -g', function(error, allPackagers) {
+            //     console.log(new RegExp('fis-parser-node-sass').test(allPackagers));
             plugins.forEach(function(p) {
                 (function(plugin) {
-                    var child;
-                    // use npm list -g packager to check packager is installed globally
+
                     exec('npm view ' + 'fis3-' + plugin, function(err) {
+                        console.log('===========================');
                         if (err) {
-                            console.log('installing fis-' + plugin);
-                            child = child_process.exec(cmd + 'fis-' + plugin, function(e, out) {
-                                console.log(out);
-                            });
+                            plugin = 'fis-' + plugin;
+                            if (inlineFisModules.indexOf(plugin) === -1) {
+                                try {
+                                    var lib = require(plugin);
+                                    console.log('===========' + plugin + ' exists!');
+                                } catch (err) {
+                                    console.log(plugin + ' not exists!');
+                                    child_process.exec(cmd + plugin, function(e, out) {
+                                        console.log(out);
+                                    });
+
+                                }
+
+                            }
+
                         } else {
-                            console.log('installing fis3-' + plugin);
-                            child = child_process.exec(cmd + 'fis3-' + plugin, function(e, out) {
-                                console.log(out);
-                            });
+                            plugin = 'fis3-' + plugin;
+                            if (inlineFisModules.indexOf(plugin) === -1) {
+                                try {
+                                    var lib = require(plugin);
+                                    console.log('===========' + plugin + ' exists!');
+                                } catch (err) {
+                                    console.log(plugin + ' not exists!');
+                                    child_process.exec(cmd + plugin, function(e, out) {
+                                        console.log(out);
+                                    });
+                                }
+                            }
+
                         }
                     });
+
+
                 })(p);
             });
         }
-
     }
 };
